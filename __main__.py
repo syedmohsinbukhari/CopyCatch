@@ -8,7 +8,7 @@ if __name__ == "__main__":
         ccObj = cc.CopyCatch(int(sys.argv[1]), int(sys.argv[2]),\
         float(sys.argv[3]), float(sys.argv[4]))
         #still need to check if arguments are integers or not
-        
+
         c, P_, U_ = ccObj.RunCopyCatch()
         print("c:")
         print(c)
