@@ -39,28 +39,23 @@ class CopyCatch:
 
         self.beta = 2.0
 
-        self.I = np.matrix(\
-            [\
-            [0, 0, 0, 0, 1],\
-            [0, 1, 0, 1, 0],\
-            [0, 0, 1, 0, 1],\
-            [0, 1, 0, 1, 1],\
-            [1, 0, 0, 0, 0]] )
-
         self.L = np.matrix(\
             [\
-            [0.0, 0.0, 0.0, 0.0, 0.2],\
-            [0.0, 1.1, 0.0, 3.1, 0.0],\
-            [0.0, 0.0, 0.9, 0.0, 0.1],\
-            [0.0, 0.7, 0.0, 3.3, 0.1],\
-            [1.1, 0.0, 0.0, 0.0, 0.0]] )
+            [0.0, 0.0, 0.0, 0.0, 5.2],\
+            [0.0, 6.1, 0.0, 9.1, 5.0],\
+            [0.0, 0.0, 7.9, 0.0, 5.1],\
+            [0.0, 5.7, 0.0, 9.3, 5.1],\
+            [3.1, 0.0, 0.0, 0.0, 0.0]] )
+
+        self.I = self.L > 0.0
+        self.I = self.I.astype(float)
 
         self.U = set(range(0, len(self.I[:,1])))
         self.P = set(range(0, len(self.I[1,:])))
 
         #these two should be random
-        self.c = np.array([0.0, 1.0, 0.0, 3.0, 0.0])
-        self.P_ = set([0,1,2,3,4])
+        self.c = np.array([0.0, 6.0, 0.0, 9.0, 5.0])
+        self.P_ = set([1,3])
 
         self.U_ = set([])
 
@@ -72,7 +67,7 @@ class CopyCatch:
             cl = self.c
             self.c = self.UpdateCenter(self.c, self.P_)
             self.P_ = self.UpdateSubspace(self.c, self.P_)
-            
+
             cnt = cnt + 1
             if cnt > 100:
                 print("\nExiting due to non-convergence\n")
@@ -80,12 +75,16 @@ class CopyCatch:
 
             if ((self.c == cl).all()) and (P_l == self.P_):
                 break
-
+        
         return [self.c, self.P_, self.U_]
 
     def UpdateCenter(self, c, P_):
         """Updates cluster center"""
         U_ = self.FindUsers(self.U, c, P_)
+
+        if len(U_) == 0: #if no user is found then return
+            return c
+
         c_ = np.squeeze(np.asarray(np.sum(self.L[list(U_)], axis=0) / len(U_)))
 
         t = np.zeros((len(c_),), dtype=np.float64)
