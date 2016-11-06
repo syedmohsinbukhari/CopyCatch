@@ -39,7 +39,7 @@ class CopyCatch:
         self.phi = phi
 
         self.beta = 2.0
-
+        
 #        self.L = np.matrix(\
 #            [\
 #            [0.0, 0.0, 0.0, 0.0, 5.2],\
@@ -58,13 +58,18 @@ class CopyCatch:
 
         #these two should be random
         #self.c = np.array([0.0, 5.0, 0.0, 9.0, 5.0])
-        self.c = np.random.rand(self.L.shape[1]) * self.L.max()
-        self.P_ = set([1,3])
+        self.c = np.zeros(self.L.shape[1], dtype=np.float64)
+        self.c[145]=1474153292000.0
+        self.c[150]=1456513046000.0
+#        self.P_ = set(list(range(self.L.shape[1])))
+        self.P_ = set([145, 150, 152])
 
         self.U_ = set([])
 
     def RunCopyCatch(self):
         """Runs the main CopyCatch loop"""
+#        self.ReadjustC()
+        
         cnt = 1
         while True:
             P_l = self.P_
@@ -73,6 +78,7 @@ class CopyCatch:
             self.P_ = self.UpdateSubspace(self.c, self.P_)
             
             cnt = cnt + 1
+            
             if cnt > 100:
                 print("\nExiting due to non-convergence\n")
                 break
@@ -85,7 +91,7 @@ class CopyCatch:
     def UpdateCenter(self, c, P_):
         """Updates cluster center"""
         U_ = self.FindUsers(self.U, c, P_)
-
+        
         if len(U_) == 0: #if no user is found then return
             return c
 
@@ -156,7 +162,19 @@ class CopyCatch:
             return U_
 
         return [U_, w]
+    
+    def ReadjustC(self):
+        self.c = np.zeros(self.L.shape[1], dtype=np.float64)
+        min_time = np.min( [x for x in self.L.flatten() if x > 0.0] )
+        max_time = np.max( [x for x in self.L.flatten() if x > 0.0] )
+#        P_list = list(self.P_)
+#        np.random.shuffle(P_list)
+#        P_list = P_list[:self.m]
+        for P_ind in range(2):#P_list:
+            self.c[P_ind] = min_time + (np.random.rand() * (max_time - min_time) )
         
+        print ([x for x in self.c if x > 0.0])
+    
     def readmatrixfile(self, path, make_model = False):
         """Reads and optionally saves the binarized version of the matrix"""
         f = open(path, 'r')
