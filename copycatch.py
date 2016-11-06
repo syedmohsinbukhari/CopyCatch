@@ -6,7 +6,8 @@ Created on Sat Sep 24 10:39:27 2016
 """
 
 import numpy as np
-
+import pickle
+import ast
 
 class CopyCatch:
 
@@ -39,22 +40,25 @@ class CopyCatch:
 
         self.beta = 2.0
 
-        self.L = np.matrix(\
-            [\
-            [0.0, 0.0, 0.0, 0.0, 5.2],\
-            [0.0, 6.1, 0.0, 9.1, 5.0],\
-            [0.0, 0.0, 7.9, 0.0, 5.1],\
-            [0.0, 5.7, 0.0, 9.3, 5.1],\
-            [3.1, 0.0, 0.0, 0.0, 0.0]] )
+#        self.L = np.matrix(\
+#            [\
+#            [0.0, 0.0, 0.0, 0.0, 5.2],\
+#            [0.0, 6.1, 0.0, 9.1, 5.0],\
+#            [0.0, 0.0, 7.9, 0.0, 5.1],\
+#            [0.0, 5.7, 0.0, 9.3, 5.1],\
+#            [3.1, 0.0, 0.0, 0.0, 0.0]] )
+
+        self.L = self.readserializedmatrix('/home/elcid/workspace/data/maryam_nawaz_twitter/data.pkl')
 
         self.I = self.L > 0.0
-        self.I = self.I.astype(float)
+        self.I = self.I.astype(int)
 
-        self.U = set(range(0, len(self.I[:,1])))
-        self.P = set(range(0, len(self.I[1,:])))
+        self.U = set(range(0, self.L.shape[0] ))
+        self.P = set(range(0, self.L.shape[1] ))
 
         #these two should be random
-        self.c = np.array([0.0, 6.0, 0.0, 9.0, 5.0])
+        #self.c = np.array([0.0, 5.0, 0.0, 9.0, 5.0])
+        self.c = np.random.rand(self.L.shape[1]) * self.L.max()
         self.P_ = set([1,3])
 
         self.U_ = set([])
@@ -67,7 +71,7 @@ class CopyCatch:
             cl = self.c
             self.c = self.UpdateCenter(self.c, self.P_)
             self.P_ = self.UpdateSubspace(self.c, self.P_)
-
+            
             cnt = cnt + 1
             if cnt > 100:
                 print("\nExiting due to non-convergence\n")
@@ -101,15 +105,16 @@ class CopyCatch:
         U_ = self.FindUsers(self.U, c, P_l)
         for j_ in P_l:
             j__ = j_
-            U_j__ = self.FindUsers(U_, c, P_l)
+            U_j__ = self.FindUsers(U_, c, set([j__]))
 
             for j in (self.P - P_):
-                U_j = self.FindUsers(U_, c, (P_ - set([j__])) | set([j]) )
+                U_j = self.FindUsers(U_, c, set([j]))#(P_ - set([j__])) | set([j]) )
                 if (U_j__ <= U_j) and (len(U_j) > 0):
                     j__ = j
                     U_j__ = U_j
 
-            P_ = (P_ - set([j_])) | set([j__])
+            #P_ = (P_ - set([j_])) | set([j__])
+            P_ = P_ | set([j__])
 
         self.U_ = U_j__
         return P_
@@ -144,10 +149,38 @@ class CopyCatch:
                     ( (j==jc) and np.abs( c[j] - self.L[i,j] ) <= dt_ ) ):
                     w[i] = w[i] + 1
 
-            if w[i] >= (self.phi * self.m):
+            if w[i] >= (self.phi * self.m) or (len(P_) <= 1 and w[i] > 0):
                 U_ = U_ | set([i])
 
         if jc < 0 and dt_ < 0: #in case no jc and dt_ were given
             return U_
 
         return [U_, w]
+        
+    def readmatrixfile(self, path, make_model = False):
+        """Reads and optionally saves the binarized version of the matrix"""
+        f = open(path, 'r')
+        x = f.readline()
+        c = x.count(',') + 1
+        f.close()
+        
+        mat = np.zeros((0, c), dtype = np.float64)
+        
+        f = open(path, 'r')
+        for x in f:
+            p = ast.literal_eval(x)
+            mat = np.append(mat, [p], axis = 0)
+        
+        f.close()
+        
+        if make_model:
+            output = open(path + '.pkl', 'wb')
+            pickle.dump(mat, output)
+            output.close()
+        
+        return mat
+    
+    def readserializedmatrix(self, path):
+        """Reads binarized version of the matrix"""
+        pkl_file = open(path, 'rb')
+        return pickle.load(pkl_file)
