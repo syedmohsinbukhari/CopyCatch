@@ -49,6 +49,7 @@ class CopyCatch:
 #            [3.1, 0.0, 0.0, 0.0, 0.0]] )
 
         self.L = self.readserializedmatrix('/home/elcid/workspace/data/maryam_nawaz_twitter/data.pkl')
+        self.L = self.L[:, 1:]
 
         self.I = self.L > 0.0
         self.I = self.I.astype(int)
@@ -57,12 +58,18 @@ class CopyCatch:
         self.P = set(range(0, self.L.shape[1] ))
 
         #these two should be random
+#            lenSuspectedUsers = len(U_)
         #self.c = np.array([0.0, 5.0, 0.0, 9.0, 5.0])
-        self.c = np.zeros(self.L.shape[1], dtype=np.float64)
-        self.c[145]=1474153292000.0
-        self.c[150]=1456513046000.0
+#        self.c = np.zeros(self.L.shape[1], dtype=np.float64)
+#        self.c[145]=1474153292000.0
+#        self.c[150]=1456513046000.0
+        self.c = [np.mean([k for k in np.squeeze( np.asarray( \
+            self.L[:, l] ) ) if k > 0.0]) for l in range(\
+            self.L.shape[1])]
+
 #        self.P_ = set(list(range(self.L.shape[1])))
-        self.P_ = set([145, 150, 152])
+        self.P_ = set([3, 27, 123, 144, 151, 174, 272, 315])
+#        self.P_ = set([0,144,149,151])
 
         self.U_ = set([])
 

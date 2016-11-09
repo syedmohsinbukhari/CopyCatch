@@ -15,12 +15,14 @@ if __name__ == "__main__":
         c, P_, U_ = ccObj.RunCopyCatch()
 
         if __display__:
-            print("c:")
-            print(c)
+#            print("c:")
+#            print(c)
             print("\nP_:")
             print(P_)
             print("\nU_:")
             print(U_)
+            print("\nlen(U_):")
+            print(len(U_))
 #            lenSuspectedUsers = len(U_)
     else:
         if __debugflag__ == True:
