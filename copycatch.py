@@ -68,7 +68,7 @@ class CopyCatch:
             self.L.shape[1])]
 
 #        self.P_ = set(list(range(self.L.shape[1])))
-        self.P_ = set([3, 27, 123, 144, 151, 174, 272, 315])
+        self.P_ = set([3, 27, 123, 144, 149, 151, 174, 272, 315])
 #        self.P_ = set([0,144,149,151])
 
         self.U_ = set([])

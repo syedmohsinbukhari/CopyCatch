@@ -22,7 +22,7 @@ if __name__ == "__main__":
             print("\nU_:")
             print(U_)
             print("\nlen(U_):")
-            print(len(U_))
+            print(str(len(U_)) + " suspicious users")
 #            lenSuspectedUsers = len(U_)
     else:
         if __debugflag__ == True:
