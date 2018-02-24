@@ -1,5 +1,5 @@
 # CopyCatch
-Implementation of CopyCatch in Python 3. Not to be completely trusted.
+Implementation of CopyCatch in Python 3.
 
 ### Code is in develop branch
 
