@@ -12,7 +12,7 @@ before_script:
   - pip install -r requirements.txt
 
 script:
-  - py.test . --cov=neat
+  - py.test . --cov=CopyCatch
 
 after_success:
   - coveralls
