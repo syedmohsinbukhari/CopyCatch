@@ -12,8 +12,7 @@ before_script:
   - pip install -r requirements.txt
 
 script:
-  - pwd
-  - coverage run -m pytest
+  - coverage run -m pytest .
 
 after_success:
   - coveralls
