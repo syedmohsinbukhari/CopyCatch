@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/syedmohsinbukhari/CopyCatch.svg?branch=develop)](https://travis-ci.org/syedmohsinbukhari/CopyCatch)
+[![Coverage Status](https://coveralls.io/repos/github/syedmohsinbukhari/CopyCatch/badge.svg?branch=develop)](https://coveralls.io/github/syedmohsinbukhari/CopyCatch?branch=develop)
 # CopyCatch
 Implementation of CopyCatch in Python 3.
 
