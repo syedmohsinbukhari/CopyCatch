@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/syedmohsinbukhari/CopyCatch.svg?branch=develop)](https://travis-ci.org/syedmohsinbukhari/CopyCatch)
 # CopyCatch
 Implementation of CopyCatch in Python 3.
 
